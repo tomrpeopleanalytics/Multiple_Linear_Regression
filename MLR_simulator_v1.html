@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Turnover Intention Simulator</title>
+<style>
+:root{--navy:#12324f;--blue:#2f6f9f;--green:#2e7d5b;--red:#b5443c;--bg:#f4f7fa;--card:#fff;--muted:#5d6b78}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#1e2a33}
+header{background:var(--navy);color:#fff;padding:24px 20px}header h1{margin:0 0 6px;font-size:24px}header p{margin:0;opacity:.85;max-width:900px}
+.wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 2px 10px rgba(18,50,79,.08)}
+h2{margin:0 0 12px;font-size:18px;color:var(--navy)}
+label{display:block;font-weight:bold;margin:14px 0 6px}small{color:var(--muted);display:block;margin-top:3px;font-weight:normal}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.scale{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:2px}
+.scale span{width:18px;text-align:center}
+.toggle{display:flex;gap:10px;margin-top:6px}.toggle button{flex:1;padding:10px;border:1px solid #c8d4dd;background:#fff;border-radius:8px;cursor:pointer;font-weight:bold}
+.toggle button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.score{font-size:44px;font-weight:bold;color:var(--navy);line-height:1}
+.risk{font-size:15px;font-weight:bold;margin-top:6px}
+.barwrap{position:relative;margin-top:12px}
+.bar{height:18px;background:#e3eaf0;border-radius:9px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#2e7d5b,#e0a63a,#b5443c);width:0%;transition:width .3s}
+.marker{position:absolute;top:0;left:43.25%;width:2px;height:18px;background:var(--navy);border-radius:2px;transform:translateX(-50%)}
+.avglabel{position:absolute;top:22px;left:43.25%;transform:translateX(-50%);color:var(--navy);font-size:12px;font-weight:bold;white-space:nowrap}
+.scalebar{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;margin-top:26px}
+.scalebar span{flex:1;text-align:center}.scalebar span:first-child{text-align:left}.scalebar span:last-child{text-align:right}
+.note{background:#eef6f2;border-left:4px solid var(--green);padding:10px 12px;border-radius:6px;margin-top:14px;font-size:14px}
+.interp{margin-top:10px;padding:12px;border-radius:8px;font-size:14px}
+.pos{background:#eaf5ef;border-left:4px solid var(--green)}.neg{background:#f8ecea;border-left:4px solid var(--red)}
+.equation{background:#fff;border:1px solid #d8e2ea;border-radius:10px;padding:16px;margin-top:16px;font-family:Georgia,serif;font-size:16px;line-height:1.7;overflow-x:auto}
+.equation b{color:var(--navy)}
+footer{color:var(--muted);font-size:12px;text-align:center;margin:24px 0}
+
+[hidden]{display:none!important}.tabs{display:flex;gap:8px;margin-bottom:18px}.tabs button,.controls button,.actions button{padding:11px 16px;border:1px solid #bacbd8;border-radius:8px;background:white;color:var(--navy);cursor:pointer;font-size:15px}.tabs button[aria-selected=true]{background:var(--navy);color:white}.lesson{margin-bottom:16px;line-height:1.6}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px;border-bottom:1px solid #dbe4ec}th{background:#edf3f8}textarea,input[type=text]{width:100%;padding:12px;border:1px solid #bacbd8;border-radius:7px;font:inherit;margin-top:6px}textarea{resize:vertical}.priority{padding:16px 0;border-bottom:1px solid #dbe4ec}.controls,.actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.chartrow{display:block;width:100%;text-align:left;border:1px solid #dbe4ec;background:white;padding:12px;margin:8px 0;border-radius:8px;cursor:pointer;font:inherit}.charttrack{display:block;background:#edf1f5;height:18px;margin-top:8px;border-radius:4px;overflow:hidden}.chartfill{display:block;height:100%}.status{color:var(--muted);font-size:13px}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #d89d26;outline-offset:3px}.caution{background:#fff6df;border-left:4px solid #b27a11;padding:14px}.chartrow:hover{background:#f4f8fb}
+.signed-chart{margin:24px 0;padding:16px 12px;background:#f7fafc;border:1px solid #dbe4ec;border-radius:10px}.chart-heading{display:grid;grid-template-columns:1fr 1fr;text-align:center;font-weight:bold;margin-bottom:12px}.chart-heading span:first-child{color:var(--green)}.chart-heading span:last-child{color:var(--red)}.chart-axis{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:12px}.signed-row{margin:16px 0}.signed-label{font-size:14px;margin-bottom:5px}.signed-label span{color:var(--muted)}.signed-track{position:relative;height:25px;background:linear-gradient(to right,#eaf5ef 50%,#f8ecea 50%);border-radius:3px}.zero-line{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:var(--navy);z-index:2;transform:translateX(-1px)}.signed-bar{position:absolute;top:3px;height:19px;border-radius:2px}</style></head><body>
+<header><div class="wrap"><h1>Turnover Intention Simulator</h1><p>Choose whole-number values for each factor to see how they are associated with an employee’s intention to leave. The sliders move in one-unit steps.</p></div></header>
+<main class="wrap"><nav aria-label="Regression results" class="tabs" role="tablist"><button aria-controls="unstandardised" aria-selected="true" id="tab-u" onclick="showTab('u')" role="tab">Unstandardised</button><button aria-controls="standardised" aria-selected="false" id="tab-s" onclick="showTab('s')" role="tab" tabindex="-1">Standardised</button></nav><section aria-labelledby="tab-u" id="unstandardised" role="tabpanel"><div class="grid">
+<div class="card"><h2>Employee profile</h2>
+<label>Mental health score<small>Higher score means better mental health. The slider moves in 1-point steps.</small><input id="mh" max="10" min="1" step="1" type="range" value="1"/></label>
+<div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+<label>Coaching support<small>Did the employee receive coaching support?</small><div class="toggle"><button class="active" id="coach0" onclick="setCoach(0)">No coaching support</button><button id="coach1" onclick="setCoach(1)">Coaching support</button></div></label>
+<label>Manager support<small>Higher score means more perceived support from their manager. The slider moves in 1-point steps.</small><input id="mgr" max="5" min="1" step="1" type="range" value="1"/></label>
+<div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+<label>Workplace aggression<small>Higher score means more exposure to aggression at work. The slider moves in 1-point steps.</small><input id="agg" max="5" min="1" step="1" type="range" value="1"/></label>
+<div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+</div>
+<div class="card"><h2>Estimated turnover intention</h2>
+<div class="score" id="score">1.00</div><div class="risk" id="risk"></div>
+<div class="barwrap"><div class="marker"></div><div class="bar"><div class="fill" id="fill"></div></div><div class="avglabel"><b>2.73</b></div></div>
+<div class="scalebar"><span>1 = very low intention to leave</span><span></span><span>5 = very high intention to leave</span></div>
+<div class="note" id="compare"></div>
+<div class="note" style="background:#f3f6f9;border-left-color:var(--blue)"><b>Model explanation:</b> This simulator uses the unstandardised regression model fitted to the 500-employee dataset. The four factors together explain about 71% of the variation in turnover intention. The vertical marker shows the organisation’s average turnover-intention score of 2.73.</div>
+</div></div>
+<div class="card" style="margin-top:16px"><h2>What your selections mean</h2><div id="interp"></div></div>
+<div class="equation"><h2 style="margin-top:0">Regression equation</h2>
+<p><b>Turnover Intention = 3.662 − 0.068(Mental Health) − 1.170(Coaching Support) − 0.228(Manager Support) + 0.227(Workplace Aggression)</b></p>
+<p><b>How to read the equation:</b> Start with 3.662. Then subtract 0.068 for each 1-point increase in mental health, subtract 1.170 if coaching support is provided, subtract 0.228 for each 1-point increase in manager support, and add 0.227 for each 1-point increase in workplace aggression.</p>
+<p><b>Example:</b> For an employee with a mental-health score of 5, no coaching support, manager support of 3, and workplace aggression of 3:<br/>Turnover Intention = 3.662 − 0.068(5) − 1.170(0) − 0.228(3) + 0.227(3) = <b>2.94</b>.</p>
+<p><b>Note:</b> These are unstandardised coefficients. They show the estimated change in turnover intention for a one-unit change in each factor, while holding the other factors constant. The results show associations, not proof of cause and effect.</p>
+</div></section>
+<section aria-labelledby="tab-s" hidden="" id="standardised" role="tabpanel">
+<div class="card lesson"><h2>Standardised results: comparing what matters most</h2><p>Use standardised results to compare the strength and direction of the four predictors’ associations with turnover intention, using a comparable scale.</p></div>
+<div class="card lesson"><h2>1. What standardised results mean</h2><p>The predictors use different scales: mental health is scored from 1 to 10, manager support and workplace aggression from 1 to 5, and coaching support is coded 0 (no) or 1 (yes). Standardisation expresses variation in a common unit: the standard deviation (SD).</p><p>Think of this as converting different measurements to a common ruler—not a universal importance score. A standard deviation describes how spread out values are in this dataset.</p></div>
+<div class="card lesson"><h2>2. The standardised coefficients for this model</h2><p>The standardised coefficients below show how each predictor is associated with turnover intention after accounting for the other predictors in the model.</p><div aria-label="Standardised coefficients: coaching support minus 0.661, workplace aggression plus 0.360, manager support minus 0.343, mental health minus 0.195. Negative values are protective associations; positive values are risk associations." class="signed-chart" role="img"><div class="chart-heading"><span>Protective Factors</span><span>Risk Factors</span></div><div class="chart-axis"><span>−0.7</span><span>0</span><span>+0.7</span></div><div class="signed-row"><div class="signed-label">Coaching support <span>(−0.661)</span></div><div class="signed-track"><span class="zero-line"></span><span class="signed-bar" style="left:2.7857%;width:47.2143%;background:var(--green)"></span></div></div><div class="signed-row"><div class="signed-label">Workplace aggression <span>(+0.360)</span></div><div class="signed-track"><span class="zero-line"></span><span class="signed-bar" style="left:50.0000%;width:25.7143%;background:var(--red)"></span></div></div><div class="signed-row"><div class="signed-label">Manager support <span>(−0.343)</span></div><div class="signed-track"><span class="zero-line"></span><span class="signed-bar" style="left:25.5000%;width:24.5000%;background:var(--green)"></span></div></div><div class="signed-row"><div class="signed-label">Mental health <span>(−0.195)</span></div><div class="signed-track"><span class="zero-line"></span><span class="signed-bar" style="left:36.0714%;width:13.9286%;background:var(--green)"></span></div></div></div><p class="status">Bars extend from zero. Longer bars indicate larger standardised associations; the sign shows the direction, not whether a predictor is inherently good or bad.</p><div class="tablewrap"><table><thead><tr><th>Predictor</th><th>Standardised coefficient (β)</th><th>Direction</th><th>Interpretation within this model</th></tr></thead><tbody>
+<tr><td>Coaching support</td><td>−0.661</td><td>Lower turnover intention</td><td>Largest absolute coefficient</td></tr><tr><td>Workplace aggression</td><td>+0.360</td><td>Higher turnover intention</td><td>Largest positive coefficient</td></tr><tr><td>Manager support</td><td>−0.343</td><td>Lower turnover intention</td><td>Smaller absolute coefficient than aggression</td></tr><tr><td>Mental health</td><td>−0.195</td><td>Lower turnover intention</td><td>Smallest absolute coefficient of these four</td></tr>
+</tbody></table></div></div>
+<div class="card lesson"><h2>3. How to read the results</h2><p>Standardised results put the predictors on a comparable scale, making their associations easier to compare.</p><ul><li>Ignore the sign when comparing size: 0.661 is larger than 0.360, so coaching support has the stronger association in this model.</li><li>A negative value means higher levels of that predictor are associated with lower turnover intention, after accounting for the other predictors.</li><li>A positive value means higher levels are associated with higher turnover intention.</li></ul><p>Here, coaching support has the strongest association with lower turnover intention. Workplace aggression is the only predictor associated with higher turnover intention.</p><p>These numbers are not percentages or changes in the original turnover-intention score. To see what a one-point change—or a change from no coaching to coaching—means in score points, use the Unstandardised tab.</p></div>
+
+<div class="card lesson"><h2>4. What standardised results do not mean</h2><div class="caution"><ul><li>They do not give the change in turnover-intention points for a one-point change in a predictor. Use the Unstandardised tab for that.</li><li>They show adjusted associations, not proof of cause and effect or guaranteed intervention benefits.</li><li>A coefficient ranking is not a complete decision rule. Consider feasibility, cost, safety, need, and the quality of evidence.</li><li>Standardised coefficients depend on the sample’s variability, including how common coaching support is. They are not a definitive measure of importance, particularly when predictors overlap.</li><li>The small difference between 0.360 and 0.343 does not establish that those associations differ statistically; uncertainty estimates would be needed.</li></ul></div></div>
+<div class="card lesson"><h2>5. How can this guide decision making?</h2><p>Enter your recommendations for each priority and explain why.</p><p>Choose the predictor you would prioritise in each position using the standardised results.</p>
+<div id="priorities"></div><div class="actions"><button onclick="clearWork()" type="button">Reset responses</button></div><p class="status" id="save-status" role="status"></p><p class="status">Responses are saved only in this browser when storage is available; nothing is sent to a teacher or server. Clearing browser data, using private browsing, or moving or renaming a local HTML file may remove access to saved answers. Reset clears all four priorities and explanations. Do not enter confidential employee information.</p></div>
+</section>
+</main>
+<footer>Based on the PHRA dataset, synthetically generated for learning purposes. Results illustrate statistical associations, not causal effects or real-world intervention outcomes.</footer>
+<script>
+const b0=3.662071, mhC=-0.067736, coachC=-1.169915, mgrC=-0.227858, aggC=0.226883;
+let coaching=0;
+function setCoach(v){coaching=v;document.getElementById('coach0').classList.toggle('active',v===0);document.getElementById('coach1').classList.toggle('active',v===1);update()}
+function update(){
+const a=parseInt(document.getElementById('mh').value), d=parseInt(document.getElementById('mgr').value), e=parseInt(document.getElementById('agg').value);
+let pred=b0+mhC*a+coachC*coaching+mgrC*d+aggC*e;
+pred=Math.max(1,Math.min(5,pred));
+document.getElementById('score').textContent=pred.toFixed(2);
+document.getElementById('fill').style.width=((pred-1)/4*100)+'%';
+let risk=pred<2?'Low intention to leave':pred<3?'Moderate-low intention to leave':pred<4?'Moderate-high intention to leave':'High intention to leave';
+const r=document.getElementById('risk');r.textContent=risk;r.style.color=pred<3?'#2e7d5b':pred<4?'#a56d10':'#b5443c';
+document.getElementById('compare').innerHTML='Compared with the organisation’s average turnover-intention score of <b>2.73</b>, this profile is <b>'+(pred>2.73?'higher':pred<2.73?'lower':'similar')+'</b>.';
+const rows=[
+['Mental health',a,mhC,'For every 1-point increase in mental health, the estimated turnover-intention score falls by about '+Math.abs(mhC).toFixed(2)+' points, assuming the other settings stay the same.','Higher mental health is associated with lower intention to leave.','pos'],
+['Coaching support',coaching?'Yes':'No',coachC,'Employees with coaching support are estimated to have a turnover-intention score about '+Math.abs(coachC).toFixed(2)+' points lower than otherwise similar employees without coaching support.','Coaching support is associated with lower intention to leave.','pos'],
+['Manager support',d,mgrC,'For every 1-point increase in manager support, the estimated turnover-intention score falls by about '+Math.abs(mgrC).toFixed(2)+' points, assuming the other settings stay the same.','Greater manager support is associated with lower intention to leave.','pos'],
+['Workplace aggression',e,aggC,'For every 1-point increase in workplace aggression, the estimated turnover-intention score rises by about '+Math.abs(aggC).toFixed(2)+' points, assuming the other settings stay the same.','More workplace aggression is associated with higher intention to leave.','neg']];
+document.getElementById('interp').innerHTML=rows.map(r=>'<div class="interp '+r[5]+'"><b>'+r[0]+': '+r[1]+'</b><br>'+r[3]+'<br><i>'+r[4]+'</i></div>').join('');
+}
+['mh','mgr','agg'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+update();
+
+function showTab(which){['u','s'].forEach(k=>{const b=document.getElementById('tab-'+k);b.setAttribute('aria-selected',String(k===which));b.tabIndex=k===which?0:-1;document.getElementById(k==='u'?'unstandardised':'standardised').hidden=k!==which;});}
+document.querySelector('.tabs').addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const k=e.key==='Home'?'u':e.key==='End'?'s':document.activeElement.id==='tab-u'?'s':'u';showTab(k);document.getElementById('tab-'+k).focus();}});
+const key='turnover-teaching-priorities-v2';
+const ids=[];
+for(let i=1;i<=4;i++){const div=document.createElement('div');div.className='priority';div.innerHTML='<h3>Priority '+i+'</h3><label for="p'+i+'">Predictor you are prioritising</label><input type="text" id="p'+i+'" placeholder="Enter a predictor" autocomplete="off"><label for="r'+i+'">Your recommendation and why</label><textarea id="r'+i+'" rows="4" placeholder="Explain your recommendation using the standardised results and any practical considerations."></textarea>';document.getElementById('priorities').append(div);ids.push('p'+i,'r'+i);}
+function status(t){document.getElementById('save-status').textContent=t;}
+function values(){return Object.fromEntries(ids.map(id=>[id,document.getElementById(id).value]));}
+function saveWork(){try{localStorage.setItem(key,JSON.stringify(values()));status('Saved in this browser at '+new Date().toLocaleTimeString()+'.');}catch(e){status('Browser saving is unavailable. Your entries remain on this open page but may be lost when it closes.');}}
+try{const raw=localStorage.getItem(key);if(raw){const data=JSON.parse(raw);ids.forEach(id=>{if(typeof data[id]==='string')document.getElementById(id).value=data[id];});status('Previously saved responses restored.');}else status('Ready. Responses will save automatically in this browser when available.');}catch(e){status('Browser storage is unavailable. Responses may be lost when you close this page.');}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',saveWork));
+function clearWork(){if(!confirm('Reset all four priorities and explanations, including their browser-saved copy?'))return;ids.forEach(id=>document.getElementById(id).value='');try{localStorage.removeItem(key);status('All responses cleared.');}catch(e){status('Fields cleared; browser storage is unavailable.');}}
+</script></body></html>
